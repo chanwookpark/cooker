@@ -1,1 +1,61 @@
+# git ignore파일 리스트 #
+# 작업 중 설정파일이 충돌을 일으키지 않도록 설정한다. #
+
+# Google App Engie #
+####################
+out/
+
+# Eclipse #
+###########
+.classpath
+.project
+.settings/
+
+# Intellij #
+############
+.idea/
+*.iml
+*.iws
+
+# Maven #
+#########
+log/
 target/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
