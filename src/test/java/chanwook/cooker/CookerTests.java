@@ -3,6 +3,7 @@ package chanwook.cooker;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
+import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -73,6 +74,19 @@ public class CookerTests {
         CookiePrototype prototype = c.getPrototype(key);
         cookie = prototype.decoding().getCookie();
         assertThat(value, is(cookie.getValue()));
+    }
+
+    @Test
+    public void delimitedCookieValue() {
+        Cooker c = new Cooker();
+        HashMap<String, String> item = new HashMap<String, String>();
+        item.put("subkey1", "value1");
+        item.put("subkey2", "value2");
+        item.put("subkey3", "value3");
+        CookiePrototype prototype = c.cooking("subSet", item);
+
+        assertThat("subSet", is(prototype.getCookie().getName()));
+        assertThat("subkey2=value2~subkey1=value1~subkey3=value3", is(prototype.getCookie().getValue()));
     }
 
     static class TestController {
