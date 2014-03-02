@@ -6,8 +6,7 @@ import javax.servlet.http.Cookie;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Created by chanwook on 2014. 3. 1..
@@ -67,7 +66,6 @@ public class CookerTests {
         c.cooking(key, value).encoding();
 
         Cookie cookie = c.getCookie(key);
-//        System.out.print(cookie.getValue());
         assertThat("%EC%BF%A0%ED%82%A4%EA%B0%92%EC%9D%B4+%EC%9E%98+%EA%B5%AC%EC%9B%8C%EC%A7%80%EB%82%98%21",
                 is(cookie.getValue()));
 
@@ -89,9 +87,31 @@ public class CookerTests {
         assertThat("subkey2=value2~subkey1=value1~subkey3=value3", is(prototype.getCookie().getValue()));
     }
 
-    static class TestController {
-        public void get(Cooker c) {
+    @Test
+    public void secure() {
+        Cooker c = new Cooker();
+        c.cooking("key1", "value1").secure();
 
-        }
+        Cookie cookie = c.getCookie("key1");
+        assertTrue(cookie.getSecure());
+    }
+
+    @Test
+    public void sha256() {
+        Cooker c = new Cooker();
+        String key = "password";
+        // default
+        c.cooking(key, "12345678").sha256();
+
+        Cookie cookie = c.getCookie(key);
+        assertThat("ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+                is(cookie.getValue()));
+
+        // with salt value
+        c.cooking(key, "12345678").sha256("saltValue");
+
+        cookie = c.getCookie(key);
+        assertThat("d71e480d67c2c7ba50b1a8f39555e09de9ffb53b6e3482bedf6634aff5b1b068",
+                is(cookie.getValue()));
     }
 }

@@ -7,6 +7,8 @@ import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by chanwook on 2014. 3. 1..
@@ -59,6 +61,66 @@ public class CookiePrototype {
         return this;
     }
 
+    public CookiePrototype secure() {
+        Cookie cookie = cooker.getCookie(key);
+        cookie.setSecure(true);
+
+        return this;
+    }
+
+    /**
+     * SHA-256 암호화 알고리즘을 사용해 쿠키 값을 암호화 함
+     *
+     * @return
+     */
+    public CookiePrototype sha256() {
+        return sha256("");
+    }
+
+    public CookiePrototype sha256(String saltValue) {
+        return sha256(saltValue.getBytes());
+    }
+
+    public CookiePrototype sha256(byte[] saltValue) {
+        Cookie cookie = cooker.getCookie(key);
+        String originalValue = cookie.getValue();
+        if (originalValue != null && originalValue.length() > 0) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                digest.reset();
+                if (saltValue != null && saltValue.length > 0) {
+                    digest.update(saltValue);
+                }
+                byte[] shaBytes = digest.digest(originalValue.getBytes());
+
+                String shaText = toHexValue(shaBytes);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Convert to SHA-256 value: " + originalValue + " to " + shaText);
+                }
+                cookie.setValue(shaText);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            logger.warn("Cookie 값에 대한 SHA-256 암호화를 수행하려 했으나 값이 비어 있어 수행하지 않았습니다!");
+        }
+        return this;
+    }
+
+    private String toHexValue(byte[] shaBytes) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < shaBytes.length; i++) {
+            String t = Integer.toString((shaBytes[i] & 0xff) + 0x100, 16).substring(1);
+            buffer.append(t);
+        }
+        return buffer.toString();
+    }
+
+    public Cookie getCookie() {
+        return this.cooker.getCookie(key);
+    }
+
     public Cooker getCooker() {
         return cooker;
     }
@@ -66,10 +128,4 @@ public class CookiePrototype {
     public String getKey() {
         return key;
     }
-
-    public Cookie getCookie() {
-        return this.cooker.getCookie(key);
-    }
-
-
 }

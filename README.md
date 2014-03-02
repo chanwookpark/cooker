@@ -19,7 +19,7 @@ HTTP Cookie Utility
         Cooker c = new Cooker();
         c.cooking(key, value).encoding();
 
-        Cookie cookie = c.getCookie(key);
+        javax.servlet.http.Cookie cookie = c.getCookie(key);
         assertThat("Hello+World%21", is(cookie.getValue()));
 
         CookiePrototype prototype = c.getPrototype(key);
@@ -37,5 +37,31 @@ HTTP Cookie Utility
 
         // result
         assertThat("subkey2=value2~subkey1=value1~subkey3=value3", is(prototype.getCookie().getValue()));
+
+1. Secure
+
+        Cooker c = new Cooker();
+        c.cooking("key1", "value1").secure();
+
+        javax.servlet.http.Cookie cookie = c.getCookie("key1");
+        assertTrue(cookie.getSecure());
+
+1. SHA-256 secure algorithm
+
+        Cooker c = new Cooker();
+        String key = "password";
+        // default
+        c.cooking(key, "12345678").sha256();
+
+        javax.servlet.http.Cookie cookie = c.getCookie(key);
+        assertThat("ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+                is(cookie.getValue()));
+
+        // with salt value
+        c.cooking(key, "12345678").sha256("saltValue");
+
+        cookie = c.getCookie(key);
+        assertThat("d71e480d67c2c7ba50b1a8f39555e09de9ffb53b6e3482bedf6634aff5b1b068",
+                is(cookie.getValue()));
 
 1. TODO
