@@ -64,4 +64,22 @@ HTTP Cookie Utility
         assertThat("d71e480d67c2c7ba50b1a8f39555e09de9ffb53b6e3482bedf6634aff5b1b068",
                 is(cookie.getValue()));
 
+1. Various cookie collection type
+
+        Cooker c = new Cooker();
+        c.cooking("key1", "value1");
+        c.cooking("key2", "value2");
+        c.cooking("key3", "value3");
+
+        List<Cookie> list = c.toList();
+        assertNotNull(list);
+        assertThat(3, is(list.size()));
+
+        Map<String, Cookie> map = c.toMap();
+        assertNotNull(map);
+        assertThat(3, is(map.size()));
+        assertThat("value1", is(map.get("key1").getValue()));
+        assertThat("value2", is(map.get("key2").getValue()));
+        assertThat("value3", is(map.get("key3").getValue()));
+
 1. TODO
