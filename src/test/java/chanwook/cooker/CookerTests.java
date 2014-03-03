@@ -135,4 +135,38 @@ public class CookerTests {
         assertThat("value2", is(map.get("key2").getValue()));
         assertThat("value3", is(map.get("key3").getValue()));
     }
+
+    @Test
+    public void domain() {
+        // set default domain
+        String domain = "*.chanwook.com";
+        Cooker c = new Cooker("UTF-8", domain);
+
+        assertThat(domain, is(c.getDomainPattern()));
+
+        String key = "key1";
+        c.cooking(key, "value1");
+
+        Cookie cookie = c.getCookie(key);
+        assertNotNull(cookie);
+        assertThat(domain, is(cookie.getDomain()));
+
+        // specify domain value
+        String domain2 = "blog.chanwook.com";
+        c.cooking(key, "value1").domain(domain2);
+        cookie = c.getCookie(key);
+        assertNotNull(cookie);
+        assertThat(domain2, is(cookie.getDomain()));
+    }
+
+    @Test
+    public void expire() {
+        Cooker c = new Cooker();
+        int expirySecond = 24 * 60 * 60;
+        String key = "key";
+        c.cooking(key, "value").expire(expirySecond);
+
+        Cookie cookie = c.getCookie(key);
+        assertThat(expirySecond, is(cookie.getMaxAge()));
+    }
 }

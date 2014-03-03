@@ -30,6 +30,12 @@ public class CookiePrototype {
         return encoding(cooker.getCharsetName());
     }
 
+    /**
+     * URLEncoder를 사용해 쿠키값 인코딩
+     *
+     * @param charsetName
+     * @return
+     */
     private CookiePrototype encoding(String charsetName) {
         Cookie cookie = cooker.getCookie(getKey());
         String originalValue = cookie.getValue();
@@ -45,6 +51,11 @@ public class CookiePrototype {
         return this;
     }
 
+    /**
+     * URLDecoder를 사용해 쿠키값 디코딩.
+     *
+     * @return
+     */
     public CookiePrototype decoding() {
         Cookie cookie = cooker.getCookie(key);
         String originalValue = cookie.getValue();
@@ -61,10 +72,27 @@ public class CookiePrototype {
         return this;
     }
 
+    /**
+     * 참조: http://en.wikipedia.org/wiki/HTTP_cookie#Secure_and_HttpOnly
+     *
+     * @return
+     */
     public CookiePrototype secure() {
         Cookie cookie = cooker.getCookie(key);
         cookie.setSecure(true);
 
+        return this;
+    }
+
+    /**
+     * 참조: http://en.wikipedia.org/wiki/HTTP_cookie#Expires_and_Max-Age
+     *
+     * @param expirySecond
+     * @return
+     */
+    public CookiePrototype expire(int expirySecond) {
+        Cookie cookie = cooker.getCookie(key);
+        cookie.setMaxAge(expirySecond);
         return this;
     }
 
@@ -108,6 +136,16 @@ public class CookiePrototype {
         return this;
     }
 
+    /**
+     * 쿠키값의 domain 패턴 설정
+     *
+     * @param pattern
+     */
+    public void domain(String pattern) {
+        Cookie cookie = cooker.getCookie(key);
+        cookie.setDomain(pattern);
+    }
+
     private String toHexValue(byte[] shaBytes) {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < shaBytes.length; i++) {
@@ -128,4 +166,5 @@ public class CookiePrototype {
     public String getKey() {
         return key;
     }
+
 }
