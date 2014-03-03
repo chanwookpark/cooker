@@ -38,10 +38,13 @@ HTTP Cookie Utility
         // result
         assertThat("subkey2=value2~subkey1=value1~subkey3=value3", is(prototype.getCookie().getValue()));
 
-1. Secure
+1. Cookie option
 
         Cooker c = new Cooker();
-        c.cooking("key1", "value1").secure();
+        c.cooking("key1", "value1")
+            .secure()
+            .expire(expirySecond)
+        ;
 
         javax.servlet.http.Cookie cookie = c.getCookie("key1");
         assertTrue(cookie.getSecure());
