@@ -73,6 +73,8 @@ public class CookiePrototype {
     }
 
     /**
+     * 해당 쿠키값을 HTTPS 쿠키값으로 지정함 (secure=true)
+     * <p/>
      * 참조: http://en.wikipedia.org/wiki/HTTP_cookie#Secure_and_HttpOnly
      *
      * @return
@@ -81,6 +83,19 @@ public class CookiePrototype {
         Cookie cookie = cooker.getCookie(key);
         cookie.setSecure(true);
 
+        return this;
+    }
+
+    /**
+     * 참조: http://en.wikipedia.org/wiki/HTTP_cookie#Secure_and_HttpOnly
+     *
+     * @param secure HTTPS 쿠키로 사용할지 여부 지정
+     *
+     * @return
+     */
+    public CookiePrototype secure(boolean secure) {
+        Cookie cookie = cooker.getCookie(key);
+        cookie.setSecure(secure);
         return this;
     }
 
@@ -166,5 +181,4 @@ public class CookiePrototype {
     public String getKey() {
         return key;
     }
-
 }

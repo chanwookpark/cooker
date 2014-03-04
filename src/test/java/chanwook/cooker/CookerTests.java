@@ -3,8 +3,8 @@ package chanwook.cooker;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -124,7 +124,7 @@ public class CookerTests {
         c.cooking("key2", "value2");
         c.cooking("key3", "value3");
 
-        List<Cookie> list = c.toList();
+        Collection<Cookie> list = c.toList();
         assertNotNull(list);
         assertThat(3, is(list.size()));
 
