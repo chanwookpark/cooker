@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class CookerTests {
 
     @Test
-    public void initApi() {
+    public void addAndGetCookie() {
         Cooker c = new Cooker();
 
         // create Cookie
@@ -43,6 +43,18 @@ public class CookerTests {
         assertNotNull(cookie);
         assertThat(key1, is(cookie.getName()));
         assertThat(value2, is(cookie.getValue()));
+    }
+
+    @Test
+    public void deleteCookie() throws Exception {
+        Cooker c = new Cooker();
+        String key = "key1";
+        c.cooking(key, "value1");
+
+        c.delete(key);
+
+        Cookie cookie = c.getCookie(key);
+        assertThat(0, is(cookie.getMaxAge()));
     }
 
     @Test
@@ -124,11 +136,11 @@ public class CookerTests {
         c.cooking("key2", "value2");
         c.cooking("key3", "value3");
 
-        Collection<Cookie> list = c.toList();
+        Collection<Cookie> list = c.getAllAsList();
         assertNotNull(list);
         assertThat(3, is(list.size()));
 
-        Map<String, Cookie> map = c.toMap();
+        Map<String, Cookie> map = c.getAllAsMap();
         assertNotNull(map);
         assertThat(3, is(map.size()));
         assertThat("value1", is(map.get("key1").getValue()));

@@ -1,6 +1,7 @@
 package chanwook.cooker;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,5 +32,16 @@ public class InMemoryCookieStore implements CookieStore {
     @Override
     public Cookie get(String key) {
         return this.cookieMap.get(key);
+    }
+
+    @Override
+    public void initialize(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie c : cookies) {
+                this.cookieMap.put(c.getName(), c);
+            }
+        }
     }
 }

@@ -26,6 +26,14 @@ public class CookiePrototype {
         this.cooker = cooker;
     }
 
+    /**
+     * Cookie 삭제. maxAge = 0 으로 처리.
+     *
+     */
+    public void delete() {
+        expire(0);
+    }
+
     public CookiePrototype encoding() {
         return encoding(cooker.getCharsetName());
     }

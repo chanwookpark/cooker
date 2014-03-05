@@ -1,6 +1,7 @@
 package chanwook.cooker;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,4 +17,6 @@ public interface CookieStore {
     Map<String, Cookie> getAllAsMap();
 
     Cookie get(String key);
+
+    void initialize(HttpServletRequest request);
 }
