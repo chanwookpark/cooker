@@ -26,8 +26,9 @@ public class CookerInitializingWebArgumentResolverTests {
     public void init() throws Exception {
         CookerInitializingWebArgumentResolver r = new CookerInitializingWebArgumentResolver();
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setAttribute("", new Cooker());
         ServletWebRequest webRequest = new ServletWebRequest(req, new MockHttpServletResponse());
+
+        req.setAttribute(HttpCookingConstant.COOKING_INSTANCE, new Cooker());
         MethodParameter param = getMockParam();
 
         Object returnValue = r.resolveArgument(param, webRequest);
