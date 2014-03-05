@@ -7,12 +7,15 @@ HTTP Cookie Utility
 
         Cooker c = new Cooker();
 
+        // New & Get Cookie
+
         javax.servlet.http.Cookie cookie = c.cooking(key1, value1).getCookie();
         name = cookie.getName();
         value = cookie.getValue();
 
-        cookie.setValue("value update");
-        chanwook.cooker.CookiePrototype prototype = c.cooking(cookie);
+        // Delete Cookie
+
+        c.delete(key);
 
 1. Encoding/Decoding support
 
@@ -84,5 +87,13 @@ HTTP Cookie Utility
         assertThat("value1", is(map.get("key1").getValue()));
         assertThat("value2", is(map.get("key2").getValue()));
         assertThat("value3", is(map.get("key3").getValue()));
+
+1. Spring Integration
+
+        // 서블릿 필터를 통해 Request 쿠키값을 Cooker API로 동기화, 다시 Response 쿠키로 옮겨주는 역할을 함
+
+
+        // 핸들러 메서드(=컨트롤러 메서드)에서 Cooker API를 DI 받도록 WebArgumentResolver를 확장 지원
+
 
 1. TODO
