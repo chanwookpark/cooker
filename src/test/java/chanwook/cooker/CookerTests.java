@@ -27,6 +27,7 @@ public class CookerTests {
         assertNotNull(cookie);
         assertThat(key1, is(cookie.getName()));
         assertThat(value1, is(cookie.getValue()));
+        assertTrue(0 == cookie.getMaxAge());
 
         // getCookie Cookie
         cookie = c.getCookie(key1);
@@ -55,6 +56,18 @@ public class CookerTests {
 
         Cookie cookie = c.getCookie(key);
         assertThat(0, is(cookie.getMaxAge()));
+    }
+
+    @Test
+    public void hasCookie() throws Exception {
+        Cooker c = new Cooker();
+        String key = "key1";
+        assertFalse(c.hasCookie(key));
+
+        c.cooking(key, "value1");
+
+        assertTrue(c.hasCookie(key));
+
     }
 
     @Test
@@ -154,7 +167,7 @@ public class CookerTests {
         String domain = "*.chanwook.com";
         Cooker c = new Cooker("UTF-8", domain);
 
-        assertThat(domain, is(c.getDomainPattern()));
+        assertThat(domain, is(c.getDomain()));
 
         String key = "key1";
         c.cooking(key, "value1");

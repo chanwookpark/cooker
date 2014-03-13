@@ -28,7 +28,6 @@ public class CookiePrototype {
 
     /**
      * Cookie 삭제. maxAge = 0 으로 처리.
-     *
      */
     public void delete() {
         expire(0);
@@ -45,6 +44,10 @@ public class CookiePrototype {
      * @return
      */
     private CookiePrototype encoding(String charsetName) {
+        if (charsetName == null || charsetName.length() < 1) {
+            throw new IllegalArgumentException("charsetName must not null value!");
+        }
+
         Cookie cookie = cooker.getCookie(getKey());
         String originalValue = cookie.getValue();
         try {
@@ -65,10 +68,18 @@ public class CookiePrototype {
      * @return
      */
     public CookiePrototype decoding() {
+        return decoding(cooker.getCharsetName());
+    }
+
+    private CookiePrototype decoding(String charsetName) {
+        if (charsetName == null || charsetName.length() < 1) {
+            throw new IllegalArgumentException("charsetName must not null value!");
+        }
+
         Cookie cookie = cooker.getCookie(key);
         String originalValue = cookie.getValue();
         try {
-            String decodedValue = URLDecoder.decode(originalValue, cooker.getCharsetName());
+            String decodedValue = URLDecoder.decode(originalValue, charsetName);
             cookie.setValue(decodedValue);
 
             if (logger.isDebugEnabled()) {
@@ -98,7 +109,6 @@ public class CookiePrototype {
      * 참조: http://en.wikipedia.org/wiki/HTTP_cookie#Secure_and_HttpOnly
      *
      * @param secure HTTPS 쿠키로 사용할지 여부 지정
-     *
      * @return
      */
     public CookiePrototype secure(boolean secure) {
@@ -164,9 +174,16 @@ public class CookiePrototype {
      *
      * @param pattern
      */
-    public void domain(String pattern) {
+    public CookiePrototype domain(String pattern) {
         Cookie cookie = cooker.getCookie(key);
         cookie.setDomain(pattern);
+        return this;
+    }
+
+    public CookiePrototype path(String path) {
+        Cookie cookie = cooker.getCookie(key);
+        cookie.setPath(path);
+        return this;
     }
 
     private String toHexValue(byte[] shaBytes) {

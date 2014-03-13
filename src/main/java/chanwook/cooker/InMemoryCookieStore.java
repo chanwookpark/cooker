@@ -1,5 +1,8 @@
 package chanwook.cooker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -12,6 +15,8 @@ import java.util.Map;
  * Created by chanwook on 2014. 3. 4..
  */
 public class InMemoryCookieStore implements CookieStore {
+    private final Logger logger = LoggerFactory.getLogger(InMemoryCookieStore.class);
+
     private Map<String, Cookie> cookieMap = new HashMap<String, Cookie>();
 
     @Override
@@ -40,6 +45,9 @@ public class InMemoryCookieStore implements CookieStore {
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie c : cookies) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("쿠키를 쿠키저장소로 초기화합니다.(" + c.getName() + ")");
+                }
                 this.cookieMap.put(c.getName(), c);
             }
         }

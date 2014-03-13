@@ -42,6 +42,7 @@ public class CookieSynchronizationFilterTests {
     @Test
     public void initializingCookieToCookieStore() throws Exception {
         CookieSynchronizationFilter f = new CookieSynchronizationFilter();
+        f.setDefaultDomain("test.com");
         MockHttpServletRequest req = new MockHttpServletRequest();
         // add request cookie value
         req.setCookies(new Cookie("k1", "v1"), new Cookie("k2", "v2"), new Cookie("k3", "v3"));

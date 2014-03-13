@@ -7,13 +7,14 @@ import org.mockito.stubbing.Answer;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.servlet.http.Cookie;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,11 +32,17 @@ public class CookerInitializingWebArgumentResolverTests {
         req.setAttribute(HttpCookingConstant.COOKING_INSTANCE, new Cooker());
         MethodParameter param = getMockParam();
 
-        Object returnValue = r.resolveArgument(param, webRequest);
+        Object returnValue = r.resolveArgument(param, new ModelAndViewContainer(), webRequest, new WebDataBinderFactory() {
+            @Override
+            public WebDataBinder createBinder(NativeWebRequest webRequest, Object target, String objectName) throws Exception {
+                return null;
+            }
+        });
 
         assertNotNull(returnValue);
         assertTrue(returnValue instanceof Cooker);
     }
+
     private MethodParameter getMockParam() {
         MethodParameter param = mock(MethodParameter.class);
         when(param.getParameterType()).thenAnswer(new Answer<Object>() {

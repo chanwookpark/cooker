@@ -1,25 +1,22 @@
 package chanwook.cooker.support.mvc;
 
 import chanwook.cooker.Cooker;
-import chanwook.cooker.MissingConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
- * Cookie API인 Cooker를 생성하고, 이를 Response로 다시 동기화해주는 필터
- *
+ * Created by chanwook on 2014. 3. 14..
  */
-//FIXME 현재 정상동작하지 않음. HTTP가 이미 flush된 이후이기 때문에..조치필요함..
-public class CookieSynchronizationFilter extends OncePerRequestFilter {
-    private final Logger logger = LoggerFactory.getLogger(CookieSynchronizationFilter.class);
+public class CookieSynchronizationInterceptor implements HandlerInterceptor {
+
+    private final Logger logger = LoggerFactory.getLogger(CookieSynchronizationInterceptor.class);
 
     private String defaultDomain;
 
@@ -28,23 +25,12 @@ public class CookieSynchronizationFilter extends OncePerRequestFilter {
     private String defaultEncoding;
 
     @Override
-    protected void initFilterBean() throws ServletException {
-        super.initFilterBean();
-        if (defaultEncoding == null || defaultEncoding.length() < 1) {
-            throw new MissingConfigurationException("Required default encoding value at CookieSynchronizationFilter!");
-        }
-    }
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cooker cooker = initializingCookerInstance(request);
-
-        filterChain.doFilter(request, response);
-
-        // closing
-        request.removeAttribute(HttpCookingConstant.COOKING_INSTANCE);
-
-        writeCookie(cooker, response);
+        if (cooker != null) {
+            return true;
+        }
+        return false;
     }
 
     protected Cooker initializingCookerInstance(HttpServletRequest servletRequest) {
@@ -54,20 +40,28 @@ public class CookieSynchronizationFilter extends OncePerRequestFilter {
         return cooker;
     }
 
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        Object instance = request.getAttribute(HttpCookingConstant.COOKING_INSTANCE);
+        if (instance != null && instance instanceof Cooker) {
+            writeCookie((Cooker) instance, response);
+        }
+    }
+
     protected void writeCookie(Cooker cooker, HttpServletResponse response) {
         for (Cookie oldCookie : cooker.getAllAsList()) {
             Cookie newCookie = new Cookie(oldCookie.getName(), oldCookie.getValue());
             if (oldCookie.getDomain() != null) {
                 newCookie.setDomain(oldCookie.getDomain());
-            } else {
+            } else if (StringUtils.hasText(getDefaultDomain())) {
                 newCookie.setDomain(getDefaultDomain());
-            }
+            } //else { domain = null }
 
             if (oldCookie.getPath() != null) {
                 newCookie.setPath(oldCookie.getPath());
-            } else {
+            } else if (StringUtils.hasText(getDefaultPath())) {
                 newCookie.setPath(getDefaultPath());
-            }
+            } //else { path = null }
 
             if (oldCookie.getComment() != null) {
                 newCookie.setComment(oldCookie.getComment());
@@ -96,7 +90,12 @@ public class CookieSynchronizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    public void destroy() {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        //TODO What do???
+        Object instance = request.getAttribute(HttpCookingConstant.COOKING_INSTANCE);
+        if (instance != null) {
+            request.removeAttribute(HttpCookingConstant.COOKING_INSTANCE);
+        }
     }
 
     public String getDefaultDomain() {
@@ -122,5 +121,4 @@ public class CookieSynchronizationFilter extends OncePerRequestFilter {
     public void setDefaultEncoding(String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
     }
-
 }
