@@ -206,4 +206,8 @@ public class CookiePrototype {
     public String getKey() {
         return key;
     }
+
+    public String getValue() {
+        return cooker.getCookieValue(key);
+    }
 }

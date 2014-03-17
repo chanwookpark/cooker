@@ -27,7 +27,7 @@ public class CookerTests {
         assertNotNull(cookie);
         assertThat(key1, is(cookie.getName()));
         assertThat(value1, is(cookie.getValue()));
-        assertTrue(0 == cookie.getMaxAge());
+        assertTrue(-1 == cookie.getMaxAge());
 
         // getCookie Cookie
         cookie = c.getCookie(key1);
